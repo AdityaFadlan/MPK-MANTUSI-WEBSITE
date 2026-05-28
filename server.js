@@ -5,6 +5,7 @@
 // ============================================
 
 const express = require('express');
+const app = express();
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -12,7 +13,7 @@ const XLSX = require('xlsx');
 
 // Nge-serve file statis dari folder public
 app.use(express.static(path.join(__dirname, 'public')));
-const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
