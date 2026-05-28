@@ -16,6 +16,11 @@ app.use(express.urlencoded({ extended: true }));
 // Nge-serve file statis dari folder public secara aman
 app.use(express.static(path.join(__dirname, 'public')));
 
+// TAMBAHKAN BARIS INI: Biar gambar di /tmp/uploads bisa diakses lewat url /uploads
+app.use('/uploads', express.static('/tmp/uploads'));
+// Nge-serve file statis dari folder public secara aman
+app.use(express.static(path.join(__dirname, 'public')));
+
 // ============ FOLDER & DATA SETUP (Aman buat Vercel Serverless) ============
 // Vercel hanya mengizinkan penulisan file di folder /tmp bawaan serverless
 const DATA_FILE = path.join('/tmp', 'data.json');
