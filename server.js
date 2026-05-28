@@ -1,29 +1,20 @@
 // ============================================
-// SERVER.JS — MPK MAN 1 BEKASI
-// Versi dengan fitur upload gambar untuk
-// Berita, Pengurus, dan Kegiatan
+// SERVER.JS — MPK MAN 1 BEKASI (VERCEL READY)
 // ============================================
 
 const express = require('express');
-const app = express();
+const app = express(); // Pembuatan app ditaruh paling atas
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const XLSX = require('xlsx');
 
-// Nge-serve file statis dari folder public
-app.use(express.static(path.join(__dirname, 'public')));
-
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`Server jalan di port ${PORT}`);
-});
-
 // ============ MIDDLEWARE ============
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+
+// Nge-serve file statis dari folder public dengan path.join (Aman buat Vercel)
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ============ FOLDER SETUP ============
 // Pastikan semua folder yang dibutuhkan sudah ada
@@ -32,13 +23,11 @@ app.use(express.static('public'));
 });
 
 // ============ MULTER — KONFIGURASI UPLOAD GAMBAR ============
-// Semua gambar (berita, pengurus, kegiatan, logo) disimpan di public/uploads/
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/uploads/');
   },
   filename: function (req, file, cb) {
-    // Format: timestamp-fieldname-namaasli.ext  (misal: 1716900000-foto_berita-foto.jpg)
     const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
     cb(null, Date.now() + '-' + file.fieldname + '-' + safeName);
   }
@@ -126,7 +115,6 @@ function initData() {
     fs.writeFileSync(DATA_FILE, JSON.stringify(defaultData, null, 2));
   }
 
-  // Buat sample Excel jika belum ada
   if (!fs.existsSync(EXCEL_FILE)) {
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([
@@ -156,7 +144,6 @@ function saveData(data) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 }
 
-// Helper: hapus file lama jika ada
 function deleteOldFile(filePath) {
   if (!filePath) return;
   const fullPath = path.join(__dirname, 'public', filePath);
@@ -166,8 +153,6 @@ function deleteOldFile(filePath) {
 }
 
 // ============ PUBLIC API ROUTES ============
-
-// GET semua data publik
 app.get('/api/data', (req, res) => {
   const data = readData();
   const { pengaturan, ...publicData } = data;
@@ -196,7 +181,6 @@ app.get('/api/pengaturan', (req, res) => {
   res.json(pub);
 });
 
-// CEK PELANGGARAN
 app.post('/api/pelanggaran', (req, res) => {
   const { nama, kelas } = req.body;
   if (!nama || !kelas) return res.status(400).json({ error: 'Nama dan kelas wajib diisi' });
@@ -238,14 +222,11 @@ function authMiddleware(req, res, next) {
   res.status(401).json({ error: 'Unauthorized' });
 }
 
-// ADMIN: Get full data
 app.get('/api/admin/data', authMiddleware, (req, res) => {
   res.json(readData());
 });
 
-// ============ ADMIN: BERITA CRUD + UPLOAD GAMBAR ============
-
-// POST berita baru — support multipart (dengan gambar)
+// ============ ADMIN: BERITA CRUD ============
 app.post('/api/admin/berita', authMiddleware, upload.single('foto_berita'), (req, res) => {
   const data = readData();
   const gambar = req.file ? '/uploads/' + req.file.filename : (req.body.gambar || '');
@@ -262,24 +243,19 @@ app.post('/api/admin/berita', authMiddleware, upload.single('foto_berita'), (req
   res.json(newItem);
 });
 
-// PUT edit berita — support ganti gambar
 app.put('/api/admin/berita/:id', authMiddleware, upload.single('foto_berita'), (req, res) => {
   const data = readData();
   const idx = data.berita.findIndex(b => b.id == req.params.id);
   if (idx === -1) return res.status(404).json({ error: 'Tidak ditemukan' });
 
-  let gambar = data.berita[idx].gambar; // Pertahankan gambar lama by default
-
+  let gambar = data.berita[idx].gambar;
   if (req.file) {
-    // Ada file baru diunggah → hapus gambar lama, pakai yang baru
     deleteOldFile(gambar);
     gambar = '/uploads/' + req.file.filename;
   } else if (req.body.hapus_gambar === 'true') {
-    // Admin meminta hapus gambar
     deleteOldFile(gambar);
     gambar = '';
   } else if (req.body.gambar !== undefined) {
-    // Update URL gambar manual
     gambar = req.body.gambar;
   }
 
@@ -304,8 +280,7 @@ app.delete('/api/admin/berita/:id', authMiddleware, (req, res) => {
   res.json({ success: true });
 });
 
-// ============ ADMIN: KEGIATAN CRUD + UPLOAD GAMBAR ============
-
+// ============ ADMIN: KEGIATAN CRUD ============
 app.post('/api/admin/kegiatan', authMiddleware, upload.single('foto_kegiatan'), (req, res) => {
   const data = readData();
   const gambar = req.file ? '/uploads/' + req.file.filename : (req.body.gambar || '');
@@ -330,7 +305,6 @@ app.put('/api/admin/kegiatan/:id', authMiddleware, upload.single('foto_kegiatan'
   if (idx === -1) return res.status(404).json({ error: 'Tidak ditemukan' });
 
   let gambar = data.kegiatan[idx].gambar;
-
   if (req.file) {
     deleteOldFile(gambar);
     gambar = '/uploads/' + req.file.filename;
@@ -364,8 +338,7 @@ app.delete('/api/admin/kegiatan/:id', authMiddleware, (req, res) => {
   res.json({ success: true });
 });
 
-// ============ ADMIN: PENGURUS CRUD + UPLOAD FOTO ============
-
+// ============ ADMIN: PENGURUS CRUD ============
 app.post('/api/admin/pengurus', authMiddleware, upload.single('foto_pengurus'), (req, res) => {
   const data = readData();
   const foto = req.file ? '/uploads/' + req.file.filename : (req.body.foto || '');
@@ -388,7 +361,6 @@ app.put('/api/admin/pengurus/:id', authMiddleware, upload.single('foto_pengurus'
   if (idx === -1) return res.status(404).json({ error: 'Tidak ditemukan' });
 
   let foto = data.pengurus[idx].foto;
-
   if (req.file) {
     deleteOldFile(foto);
     foto = '/uploads/' + req.file.filename;
@@ -429,7 +401,7 @@ app.put('/api/admin/pengaturan', authMiddleware, (req, res) => {
   res.json(pub);
 });
 
-// ============ ADMIN: UPLOAD EXCEL PELANGGARAN ============
+// ============ ADMIN: UPLOAD EXCEL ============
 app.post('/api/admin/upload-excel', authMiddleware, uploadExcel.single('excel'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'File tidak ditemukan' });
   const dest = EXCEL_FILE;
@@ -442,7 +414,6 @@ app.post('/api/admin/upload-logo', authMiddleware, upload.single('logo'), (req, 
   if (!req.file) return res.status(400).json({ error: 'File tidak ditemukan' });
   const ext = path.extname(req.file.originalname);
   const dest = path.join(__dirname, 'public', 'logo' + ext);
-  // Hapus logo lama jika formatnya berbeda
   ['.png','.jpg','.jpeg','.svg','.webp'].forEach(e => {
     const old = path.join(__dirname, 'public', 'logo' + e);
     if (old !== dest && fs.existsSync(old)) try { fs.unlinkSync(old); } catch(e){}
@@ -473,11 +444,5 @@ app.get('/api/admin/template-excel', authMiddleware, (req, res) => {
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
-// ============ JALANKAN SERVER ============
-app.listen(PORT, () => {
-  console.log(`\n🏫  MPK MAN 1 Bekasi — Server berjalan di http://localhost:${PORT}`);
-  console.log(`📋  Halaman Publik  : http://localhost:${PORT}/`);
-  console.log(`🔐  Halaman Admin   : http://localhost:${PORT}/admin`);
-  console.log(`🔑  Password Admin  : mpkman1bekasi2024`);
-  console.log(`📁  Gambar tersimpan di: public/uploads/\n`);
-});
+// ============ EXPORT APP FOR VERCEL (Paling Penting!) ============
+module.exports = app;
