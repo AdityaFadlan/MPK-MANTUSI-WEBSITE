@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MPK MAN 1 Bekasi — Majelis Perwakilan Kelas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --bg: #f7f4ef;
+      --bg2: #ede9e0;
+      --surface: #ffffff;
+      --surface2: #f0ece3;
+      --border: #d8d0c0;
+      --text: #1a1714;
+      --text2: #5a5248;
+      --text3: #8a8078;
+      --accent: #1e4d2b;
+      --accent2: #2d6e3e;
+      --accent-light: #e8f2eb;
+      --gold: #b8922a;
+      --gold-light: #f5ecd6;
+      --red: #c0392b;
+      --red-light: #fdecea;
+      --shadow: 0 2px 20px rgba(30,20,10,0.08);
+      --shadow-lg: 0 8px 40px rgba(30,20,10,0.12);
+      --radius: 12px;
+      --radius-lg: 20px;
+      --transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    [data-theme="dark"] {
+      --bg: #111210;
+      --bg2: #191915;
+      --surface: #1e1e1a;
+      --surface2: #252520;
+      --border: #2e2d27;
+      --text: #f0ede6;
+      --text2: #a8a49c;
+      --text3: #6a6660;
+      --accent: #4a9e5c;
+      --accent2: #5ab56d;
+      --accent-light: #1a2e1e;
+      --gold: #d4a83e;
+      --gold-light: #2a2415;
+      --red: #e05c4e;
+      --red-light: #2a1614;
+      --shadow: 0 2px 20px rgba(0,0,0,0.3);
+      --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+    }
+
+    /* ===== RESET ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    /* ===== LOADING SCREEN ===== */
+    #loading-screen {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--accent);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    #loading-screen.hide {
+      opacity: 0; transform: translateY(-20px); pointer-events: none;
+    }
+    .loading-logo-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 20px;
+    }
+    .loading-logo-ring {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      animation: loadRing 1.5s ease infinite;
+      position: relative;
+    }
+    .loading-logo-ring::before {
+      content: '';
+      position: absolute; inset: -2px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: rgba(255,255,255,0.8);
+      animation: spin 1s linear infinite;
+    }
+    .loading-logo-img {
+      width: 70px; height: 70px; border-radius: 50%; object-fit: contain;
+      background: rgba(255,255,255,0.15);
+    }
+    .loading-logo-placeholder {
+      width: 70px; height: 70px; border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; color: white;
+    }
+    .loading-title {
+      font-family: 'Playfair Display', serif;
+      color: white; font-size: 1.8rem; font-weight: 700;
+      letter-spacing: 0.02em; text-align: center;
+      animation: fadeUp 0.8s 0.3s both;
+    }
+    .loading-subtitle {
+      color: rgba(255,255,255,0.7); font-size: 0.85rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      animation: fadeUp 0.8s 0.5s both;
+    }
+    .loading-bar {
+      width: 180px; height: 2px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px; margin-top: 30px;
+      overflow: hidden;
+      animation: fadeUp 0.8s 0.6s both;
+    }
+    .loading-bar-fill {
+      height: 100%; background: white; border-radius: 2px;
+      width: 0; animation: loadBar 1.8s 0.6s cubic-bezier(0.4,0,0.2,1) forwards;
+    }
+    @keyframes loadBar { to { width: 100%; } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes loadRing { 0%,100%{transform:scale(1)}50%{transform:scale(1.03)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ===== NAVBAR ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(247,244,239,0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: var(--transition);
+    }
+    [data-theme="dark"] nav {
+      background: rgba(17,18,16,0.85);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center;
+      padding: 0 24px; height: 68px; gap: 20px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none; flex-shrink: 0;
+    }
+    .nav-logo {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: var(--accent); display: flex;
+      align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .nav-logo img { width: 100%; height: 100%; object-fit: contain; }
+    .nav-logo-icon { color: white; font-size: 18px; }
+    .nav-brand-text { line-height: 1.1; }
+    .nav-brand-main {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--text);
+    }
+    .nav-brand-sub {
+      font-size: 0.68rem; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 4px;
+      margin-left: auto; list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none; color: var(--text2);
+      font-size: 0.875rem; font-weight: 500;
+      padding: 6px 14px; border-radius: 8px;
+      transition: var(--transition);
+    }
+    .nav-links a:hover { background: var(--surface2); color: var(--text); }
+    .nav-links a.active { background: var(--accent-light); color: var(--accent); }
+    .nav-actions {
+      display: flex; align-items: center; gap: 8px; margin-left: 12px;
+    }
+    .btn-theme {
+      width: 38px; height: 38px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text2); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; transition: var(--transition);
+    }
+    .btn-theme:hover { background: var(--surface2); color: var(--text); }
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 6px;
+    }
+    .nav-hamburger span {
+      width: 22px; height: 2px; background: var(--text);
+      border-radius: 2px; transition: var(--transition);
+    }
+    .mobile-menu {
+      display: none; position: fixed; inset: 68px 0 0 0;
+      background: var(--bg); z-index: 99;
+      padding: 20px 24px; flex-direction: column; gap: 4px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      text-decoration: none; color: var(--text);
+      padding: 14px 16px; border-radius: 10px;
+      font-size: 1rem; font-weight: 500;
+      transition: var(--transition);
+    }
+    .mobile-menu a:hover { background: var(--surface2); }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 100px 24px 60px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg) 50%, var(--gold-light) 100%);
+      z-index: 0;
+    }
+    .hero-pattern {
+      position: absolute; inset: 0; opacity: 0.04; z-index: 0;
+      background-image: radial-gradient(circle, var(--accent) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .hero-inner {
+      max-width: 900px; text-align: center;
+      position: relative; z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 6px 16px; border-radius: 100px;
+      font-size: 0.8rem; color: var(--text2);
+      margin-bottom: 28px;
+      animation: fadeUp 0.8s 1.8s both;
+    }
+    .hero-badge span { color: var(--accent); font-weight: 600; }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 6vw, 4.2rem);
+      font-weight: 900; line-height: 1.1;
+      color: var(--text); margin-bottom: 20px;
+      animation: fadeUp 0.8s 2s both;
+    }
+    .hero-title em { color: var(--accent); font-style: normal; }
+    .hero-desc {
+      font-size: 1.1rem; color: var(--text2);
+      max-width: 560px; margin: 0 auto 40px;
+      line-height: 1.7;
+      animation: fadeUp 0.8s 2.2s both;
+    }
+    .hero-actions {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp 0.8s 2.4s both;
+    }
+    .btn-primary {
+      padding: 12px 28px; border-radius: 10px;
+      background: var(--accent); color: white;
+      border: none; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 600;
+      text-decoration: none; display: inline-flex;
+      align-items: center; gap: 8px;
+      transition: var(--transition); box-shadow: 0 4px 20px rgba(30,77,43,0.3);
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 6px 28px rgba(30,77,43,0.4); }
+    .btn-outline {
+      padding: 12px 28px; border-radius: 10px;
+      background: transparent; color: var(--text);
+      border: 1px solid var(--border); cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 500;
+      text-decoration: none; display: inline-flex;
+      align-items: center; gap: 8px;
+      transition: var(--transition);
+    }
+    .btn-outline:hover { background: var(--surface2); border-color: var(--text3); }
+    .hero-scroll {
+      position: absolute; bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      animation: fadeUp 0.8s 2.8s both, bounce 2s 3.5s ease infinite;
+      color: var(--text3); font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase; display: flex;
+      flex-direction: column; align-items: center; gap: 6px;
+    }
+    .hero-scroll i { font-size: 18px; }
+    @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)} }
+
+    /* ===== SECTION LAYOUT ===== */
+    section { padding: 90px 24px; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-header { margin-bottom: 52px; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-label::before {
+      content: ''; width: 24px; height: 2px; background: var(--accent);
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 700; color: var(--text); line-height: 1.2;
+    }
+    .section-desc {
+      font-size: 1rem; color: var(--text2);
+      margin-top: 12px; max-width: 520px; line-height: 1.7;
+    }
+
+    /* ===== STATS BAR ===== */
+    .stats-bar {
+      background: var(--accent); padding: 30px 24px;
+    }
+    .stats-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 20px; text-align: center;
+    }
+    .stat-item { color: white; }
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem; font-weight: 700; line-height: 1;
+    }
+    .stat-label { font-size: 0.8rem; opacity: 0.8; margin-top: 4px; }
+
+    /* ===== BERITA SECTION ===== */
+    .berita-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .berita-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: var(--transition);
+      cursor: pointer;
+    }
+    .berita-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+    .berita-card-header {
+      height: 160px; background: var(--accent-light);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .berita-card-header img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .berita-card-header-icon {
+      font-size: 40px; color: var(--accent); opacity: 0.4;
+    }
+    .berita-kategori {
+      position: absolute; top: 12px; left: 12px;
+      background: var(--accent); color: white;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; padding: 4px 10px; border-radius: 6px;
+    }
+    .berita-card-body { padding: 20px; }
+    .berita-tanggal {
+      font-size: 0.75rem; color: var(--text3); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .berita-judul {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700; color: var(--text);
+      line-height: 1.4; margin-bottom: 10px;
+    }
+    .berita-isi {
+      font-size: 0.875rem; color: var(--text2);
+      line-height: 1.6;
+      display: -webkit-box; -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .berita-read {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 14px; font-size: 0.825rem; font-weight: 600;
+      color: var(--accent); text-decoration: none;
+      transition: var(--transition);
+    }
+    .berita-read:hover { gap: 10px; }
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      color: var(--text3);
+      grid-column: 1 / -1;
+    }
+    .empty-state i { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
+    .empty-state p { font-size: 0.95rem; }
+
+    /* ===== KEGIATAN / COMING SOON ===== */
+    .kegiatan-section { background: var(--bg2); }
+    .kegiatan-list { display: flex; flex-direction: column; gap: 16px; }
+    .kegiatan-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 24px 28px;
+      display: flex; align-items: flex-start; gap: 20px;
+      transition: var(--transition);
+    }
+    .kegiatan-card:hover {
+      border-color: var(--accent); box-shadow: var(--shadow);
+      transform: translateX(4px);
+    }
+    .kegiatan-date {
+      flex-shrink: 0; width: 60px; text-align: center;
+      background: var(--accent-light); border-radius: 10px;
+      padding: 10px 6px; border: 1px solid var(--border);
+    }
+    .kegiatan-date-day {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 700; color: var(--accent);
+      line-height: 1;
+    }
+    .kegiatan-date-month {
+      font-size: 0.7rem; font-weight: 600; color: var(--text3);
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .kegiatan-info { flex: 1; }
+    .kegiatan-nama {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem; font-weight: 700; color: var(--text);
+      margin-bottom: 6px;
+    }
+    .kegiatan-meta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      font-size: 0.8rem; color: var(--text3); margin-bottom: 8px;
+    }
+    .kegiatan-meta span { display: flex; align-items: center; gap: 5px; }
+    .kegiatan-desc { font-size: 0.875rem; color: var(--text2); line-height: 1.6; }
+    .kegiatan-badge {
+      padding: 4px 12px; border-radius: 20px; font-size: 0.7rem;
+      font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+      flex-shrink: 0; align-self: flex-start;
+    }
+    .badge-upcoming { background: var(--gold-light); color: var(--gold); }
+    .badge-ongoing { background: var(--accent-light); color: var(--accent); }
+    .badge-done { background: var(--surface2); color: var(--text3); }
+
+    /* ===== PELANGGARAN SECTION ===== */
+    .pelanggaran-section { background: var(--bg); }
+    .pelanggaran-form-wrap {
+      max-width: 560px; margin: 0 auto;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 36px;
+      box-shadow: var(--shadow);
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block; font-size: 0.82rem; font-weight: 600;
+      color: var(--text2); margin-bottom: 6px; letter-spacing: 0.03em;
+    }
+    .form-input {
+      width: 100%; padding: 12px 14px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--bg);
+      color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; transition: var(--transition);
+    }
+    .form-input:focus {
+      outline: none; border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(30,77,43,0.1);
+      background: var(--surface);
+    }
+    .form-input::placeholder { color: var(--text3); }
+    .pelanggaran-result {
+      margin-top: 28px; display: none;
+    }
+    .pelanggaran-result.show { display: block; }
+    .pelanggaran-result-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px; padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .result-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 700; color: var(--text);
+    }
+    .result-class { font-size: 0.85rem; color: var(--text3); margin-top: 2px; }
+    .poin-badge {
+      padding: 8px 18px; border-radius: 10px; font-weight: 700;
+      font-size: 1rem;
+    }
+    .poin-aman { background: var(--accent-light); color: var(--accent); }
+    .poin-waspada { background: var(--gold-light); color: var(--gold); }
+    .poin-bahaya { background: var(--red-light); color: var(--red); }
+    .pelanggaran-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    .pelanggaran-table th {
+      text-align: left; padding: 10px 12px;
+      background: var(--surface2); color: var(--text3);
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em;
+      text-transform: uppercase; border-bottom: 1px solid var(--border);
+    }
+    .pelanggaran-table th:first-child { border-radius: 8px 0 0 0; }
+    .pelanggaran-table th:last-child { border-radius: 0 8px 0 0; }
+    .pelanggaran-table td {
+      padding: 12px 12px; border-bottom: 1px solid var(--border);
+      color: var(--text2); vertical-align: top;
+    }
+    .pelanggaran-table tr:last-child td { border-bottom: none; }
+    .pelanggaran-table tr:hover td { background: var(--surface2); }
+    .td-poin { font-weight: 700; color: var(--red); }
+    .no-violation {
+      text-align: center; padding: 30px; color: var(--accent);
+    }
+    .no-violation i { font-size: 32px; margin-bottom: 8px; }
+
+    /* ===== PENGURUS SECTION ===== */
+    .pengurus-section { background: var(--bg2); }
+    .pengurus-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .pengurus-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 24px 16px;
+      text-align: center; transition: var(--transition);
+    }
+    .pengurus-card:hover {
+      transform: translateY(-4px); box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+    .pengurus-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--accent-light); margin: 0 auto 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; color: var(--accent); overflow: hidden;
+      border: 2px solid var(--border);
+    }
+    .pengurus-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .pengurus-nama {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700; color: var(--text);
+      margin-bottom: 4px;
+    }
+    .pengurus-jabatan {
+      font-size: 0.75rem; font-weight: 600;
+      color: var(--accent); letter-spacing: 0.04em;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .pengurus-kelas {
+      font-size: 0.78rem; color: var(--text3);
+    }
+    .pengurus-ig {
+      margin-top: 10px; display: inline-flex; align-items: center;
+      gap: 5px; font-size: 0.75rem; color: var(--text3);
+      text-decoration: none; transition: var(--transition);
+    }
+    .pengurus-ig:hover { color: var(--accent); }
+
+    /* ===== VISI MISI SECTION ===== */
+    .visi-misi-section { background: var(--accent); color: white; }
+    .visi-misi-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+    }
+    .visi-misi-card { }
+    .vm-label {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .vm-label::before { content: ''; width: 24px; height: 2px; background: white; opacity: 0.5; }
+    .vm-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 700; margin-bottom: 16px;
+    }
+    .vm-text { font-size: 0.95rem; line-height: 1.8; opacity: 0.85; }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--bg2); border-top: 1px solid var(--border);
+      padding: 50px 24px 30px;
+    }
+    .footer-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px;
+      padding-bottom: 30px; border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .footer-brand { }
+    .footer-logo {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+    }
+    .footer-logo-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: var(--accent); display: flex;
+      align-items: center; justify-content: center;
+      color: white; font-size: 20px; overflow: hidden;
+    }
+    .footer-logo-icon img { width: 100%; height: 100%; object-fit: contain; }
+    .footer-brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700; color: var(--text);
+    }
+    .footer-brand-sub { font-size: 0.75rem; color: var(--text3); }
+    .footer-desc { font-size: 0.875rem; color: var(--text2); line-height: 1.7; }
+    .footer-col-title {
+      font-size: 0.8rem; font-weight: 700; color: var(--text);
+      letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-links a {
+      text-decoration: none; color: var(--text2);
+      font-size: 0.875rem; transition: var(--transition);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-bottom {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 0.8rem; color: var(--text3);
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface); border-radius: var(--radius-lg);
+      width: 100%; max-width: 640px; max-height: 80vh;
+      overflow-y: auto; padding: 32px;
+      transform: translateY(20px); transition: transform 0.3s ease;
+      box-shadow: var(--shadow-lg);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 20px;
+      gap: 16px;
+    }
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; font-weight: 700; color: var(--text);
+    }
+    .modal-close {
+      width: 34px; height: 34px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--text2); cursor: pointer; font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: var(--transition);
+    }
+    .modal-close:hover { background: var(--surface); color: var(--text); }
+    .modal-meta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      font-size: 0.82rem; color: var(--text3); margin-bottom: 18px;
+    }
+    .modal-meta span { display: flex; align-items: center; gap: 6px; }
+    .modal-body { font-size: 0.95rem; color: var(--text2); line-height: 1.75; }
+
+    /* ===== SCROLL ANIMATION ===== */
+    .reveal {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ===== MISC ===== */
+    .divider { height: 1px; background: var(--border); margin: 0; }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .visi-misi-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      section { padding: 60px 16px; }
+      .pengurus-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .loading-dots {
+      display: flex; gap: 5px; justify-content: center; margin-top: 20px;
+    }
+    .loading-dots span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      animation: dotPulse 1.4s ease infinite;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dotPulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
+  </style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen">
+  <div class="loading-logo-wrap">
+    <div class="loading-logo-ring">
+      <div class="loading-logo-placeholder" id="loading-logo-inner">
+        <i class="fas fa-landmark"></i>
+      </div>
+    </div>
+    <div class="loading-title" id="loading-mpk-name">MPK</div>
+    <div class="loading-subtitle" id="loading-school-name">MAN 1 Bekasi</div>
+    <div class="loading-bar"><div class="loading-bar-fill"></div></div>
+    <div class="loading-dots">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <div class="nav-logo" id="nav-logo-wrap">
+        <i class="fas fa-landmark nav-logo-icon" id="nav-logo-icon"></i>
+      </div>
+      <div class="nav-brand-text">
+        <div class="nav-brand-main" id="nav-brand-main">MPK MAN 1 Bekasi</div>
+        <div class="nav-brand-sub">Majelis Perwakilan Kelas</div>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#beranda" class="active">Beranda</a></li>
+      <li><a href="#berita">Berita</a></li>
+      <li><a href="#kegiatan">Kegiatan</a></li>
+      <li><a href="#pelanggaran">Pelanggaran</a></li>
+      <li><a href="#pengurus">Pengurus</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-theme" id="themeToggle" title="Ubah Tema">
+        <i class="fas fa-moon" id="themeIcon"></i>
+      </button>
+      <div class="nav-hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#beranda" onclick="toggleMenu()">Beranda</a>
+  <a href="#berita" onclick="toggleMenu()">Berita</a>
+  <a href="#kegiatan" onclick="toggleMenu()">Kegiatan</a>
+  <a href="#pelanggaran" onclick="toggleMenu()">Cek Pelanggaran</a>
+  <a href="#pengurus" onclick="toggleMenu()">Pengurus MPK</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="beranda">
+  <div class="hero-bg"></div>
+  <div class="hero-pattern"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <i class="fas fa-circle-check" style="color:var(--accent)"></i>
+      Tahun Ajaran <span id="hero-tahun">2025/2026</span>
+    </div>
+    <h1 class="hero-title">
+      Majelis Perwakilan Kelas<br/><em id="hero-school">MAN 1 Bekasi</em>
+    </h1>
+    <p class="hero-desc" id="hero-visi">
+      Mewujudkan MPK yang aktif, aspiratif, dan berintegritas dalam membangun ekosistem sekolah yang harmonis.
+    </p>
+    <div class="hero-actions">
+      <a href="#berita" class="btn-primary"><i class="fas fa-newspaper"></i> Lihat Berita Terbaru</a>
+      <a href="#pelanggaran" class="btn-outline"><i class="fas fa-search"></i> Cek Pelanggaran</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-bar" id="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <div class="stat-number" id="stat-pengurus">0</div>
+      <div class="stat-label">Pengurus Aktif</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-1">
+      <div class="stat-number" id="stat-berita">0</div>
+      <div class="stat-label">Berita & Informasi</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-2">
+      <div class="stat-number" id="stat-kegiatan">0</div>
+      <div class="stat-label">Kegiatan Mendatang</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-3">
+      <div class="stat-number" id="stat-tahun">2024</div>
+      <div class="stat-label">Tahun Aktif</div>
+    </div>
+  </div>
+</div>
+
+<!-- BERITA SECTION -->
+<section id="berita">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <div class="section-label">Informasi Terkini</div>
+      <h2 class="section-title">Berita &amp; Pengumuman</h2>
+      <p class="section-desc">Ikuti perkembangan terbaru seputar kegiatan dan informasi dari MPK MAN 1 Bekasi.</p>
+    </div>
+    <div class="berita-grid" id="berita-container">
+      <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat berita...</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- KEGIATAN SECTION -->
+<section id="kegiatan" class="kegiatan-section">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <div class="section-label">Coming Soon</div>
+      <h2 class="section-title">Kegiatan Mendatang</h2>
+      <p class="section-desc">Jadwal kegiatan MPK yang akan segera hadir. Catat tanggalnya!</p>
+    </div>
+    <div class="kegiatan-list" id="kegiatan-container">
+      <div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat kegiatan...</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- VISI MISI -->
+<section class="visi-misi-section" id="visi-misi">
+  <div class="section-inner">
+    <div class="visi-misi-grid">
+      <div class="visi-misi-card reveal">
+        <div class="vm-label">Visi Kami</div>
+        <div class="vm-title">Visi MPK</div>
+        <p class="vm-text" id="vm-visi">Mewujudkan MPK yang aktif, aspiratif, dan berintegritas dalam membangun ekosistem sekolah yang harmonis.</p>
+      </div>
+      <div class="visi-misi-card reveal reveal-delay-1">
+        <div class="vm-label">Misi Kami</div>
+        <div class="vm-title">Misi MPK</div>
+        <p class="vm-text" id="vm-misi">Menampung dan menyalurkan aspirasi siswa, mengawal pelaksanaan tata tertib, dan menjadi mitra strategis OSIS.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PELANGGARAN SECTION -->
+<section id="pelanggaran" class="pelanggaran-section">
+  <div class="section-inner">
+    <div class="section-header reveal" style="text-align:center;">
+      <div class="section-label" style="justify-content:center;">Data Tata Tertib</div>
+      <h2 class="section-title">Cek Pelanggaran Siswa</h2>
+      <p class="section-desc" style="margin:0 auto;">Masukkan nama dan kelas untuk melihat catatan pelanggaran tata tertib sekolah.</p>
+    </div>
+    <div class="pelanggaran-form-wrap reveal">
+      <div class="form-group">
+        <label class="form-label">Nama Siswa</label>
+        <input type="text" class="form-input" id="input-nama" placeholder="Contoh: Ahmad Fauzan" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kelas</label>
+        <input type="text" class="form-input" id="input-kelas" placeholder="Contoh: X IPA 1" />
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center;" onclick="cekPelanggaran()">
+        <i class="fas fa-search"></i> Cek Pelanggaran
+      </button>
+      <div id="pelanggaran-loading" style="text-align:center;padding:20px;display:none;color:var(--text3)">
+        <i class="fas fa-spinner fa-spin"></i> Mencari data...
+      </div>
+      <div class="pelanggaran-result" id="pelanggaran-result">
+        <div class="pelanggaran-result-header">
+          <div>
+            <div class="result-name" id="result-nama">—</div>
+            <div class="result-class" id="result-kelas">—</div>
+          </div>
+          <div class="poin-badge" id="poin-badge">0 Poin</div>
+        </div>
+        <div id="result-table-wrap"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PENGURUS SECTION -->
+<section id="pengurus" class="pengurus-section">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <div class="section-label">Struktur Organisasi</div>
+      <h2 class="section-title">Pengurus MPK</h2>
+      <p class="section-desc">Kepengurusan MPK MAN 1 Bekasi yang bertugas mewakili aspirasi seluruh siswa.</p>
+    </div>
+    <div class="pengurus-grid" id="pengurus-container">
+      <div class="empty-state" style="grid-column:1/-1"><i class="fas fa-spinner fa-spin"></i><p>Memuat data pengurus...</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <div class="footer-logo-icon" id="footer-logo-wrap">
+          <i class="fas fa-landmark" id="footer-logo-icon"></i>
+        </div>
+        <div>
+          <div class="footer-brand-name" id="footer-brand-name">MPK MAN 1 Bekasi</div>
+          <div class="footer-brand-sub">Majelis Perwakilan Kelas</div>
+        </div>
+      </div>
+      <p class="footer-desc" id="footer-visi">Mewujudkan MPK yang aktif, aspiratif, dan berintegritas dalam membangun ekosistem sekolah yang harmonis.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Navigasi</div>
+      <ul class="footer-links">
+        <li><a href="#beranda"><i class="fas fa-home"></i> Beranda</a></li>
+        <li><a href="#berita"><i class="fas fa-newspaper"></i> Berita</a></li>
+        <li><a href="#kegiatan"><i class="fas fa-calendar"></i> Kegiatan</a></li>
+        <li><a href="#pelanggaran"><i class="fas fa-search"></i> Pelanggaran</a></li>
+        <li><a href="#pengurus"><i class="fas fa-users"></i> Pengurus</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Lainnya</div>
+      <ul class="footer-links">
+        <li><a href="/admin"><i class="fas fa-lock"></i> Admin Panel</a></li>
+        <li><a href="#visi-misi"><i class="fas fa-bullseye"></i> Visi &amp; Misi</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© <span id="footer-year"></span> MPK MAN 1 Bekasi. Hak Cipta Dilindungi.</span>
+    <span>Dibuat dengan ❤️ oleh MPK MAN 1 Bekasi</span>
+  </div>
+</footer>
+
+<!-- MODAL BERITA -->
+<div class="modal-overlay" id="beritaModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Judul Berita</div>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-meta" id="modal-meta"></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ===== GLOBAL DATA =====
+let appData = null;
+
+// ===== LOADING SCREEN =====
+window.addEventListener('load', () => {
+  loadData().then(() => {
+    setTimeout(() => {
+      const ls = document.getElementById('loading-screen');
+      ls.classList.add('hide');
+      setTimeout(() => ls.remove(), 700);
+    }, 2200);
+  });
+});
+
+// ===== THEME =====
+const savedTheme = localStorage.getItem('mpk-theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+updateThemeIcon(savedTheme);
+
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('mpk-theme', next);
+  updateThemeIcon(next);
+});
+
+function updateThemeIcon(theme) {
+  const icon = document.getElementById('themeIcon');
+  icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+}
+
+// ===== LOAD DATA =====
+async function loadData() {
+  try {
+    const res = await fetch('/api/data');
+    appData = await res.json();
+    applySettings(appData.pengaturan);
+    renderBerita(appData.berita);
+    renderKegiatan(appData.kegiatan);
+    renderPengurus(appData.pengurus);
+    updateStats(appData);
+    initReveal();
+  } catch(e) {
+    console.warn('Tidak dapat terhubung ke server, menggunakan mode demo');
+    renderDemo();
+    initReveal();
+  }
+}
+
+function applySettings(s) {
+  if (!s) return;
+  const name = s.namaMPK + ' ' + s.namaSekolah;
+  document.getElementById('nav-brand-main').textContent = 'MPK ' + s.namaSekolah;
+  document.getElementById('hero-school').textContent = s.namaSekolah;
+  document.getElementById('hero-tahun').textContent = s.tahunAjaran || '2024/2025';
+  document.getElementById('hero-visi').textContent = s.visi || '';
+  document.getElementById('vm-visi').textContent = s.visi || '';
+  document.getElementById('vm-misi').textContent = s.misi || '';
+  document.getElementById('footer-brand-name').textContent = 'MPK ' + s.namaSekolah;
+  document.getElementById('footer-visi').textContent = s.visi || '';
+  document.getElementById('loading-mpk-name').textContent = 'MPK';
+  document.getElementById('loading-school-name').textContent = s.namaSekolah;
+  document.title = 'MPK ' + s.namaSekolah + ' — Majelis Perwakilan Kelas';
+
+  if (s.logoPath) {
+    // Nav logo
+    const navWrap = document.getElementById('nav-logo-wrap');
+    navWrap.innerHTML = `<img src="${s.logoPath}" alt="Logo" />`;
+    // Footer logo
+    const ftWrap = document.getElementById('footer-logo-wrap');
+    ftWrap.innerHTML = `<img src="${s.logoPath}" alt="Logo" />`;
+    // Loading logo
+    const ldWrap = document.getElementById('loading-logo-inner');
+    ldWrap.innerHTML = `<img src="${s.logoPath}" alt="Logo" class="loading-logo-img" />`;
+  }
+}
+
+function updateStats(data) {
+  animateNumber('stat-pengurus', (data.pengurus || []).length);
+  animateNumber('stat-berita', (data.berita || []).length);
+  animateNumber('stat-kegiatan', (data.kegiatan || []).filter(k => k.status !== 'done').length);
+  document.getElementById('stat-tahun').textContent = new Date().getFullYear();
+}
+
+function animateNumber(id, target) {
+  const el = document.getElementById(id);
+  let cur = 0;
+  const step = Math.max(1, Math.floor(target / 30));
+  const interval = setInterval(() => {
+    cur = Math.min(cur + step, target);
+    el.textContent = cur;
+    if (cur >= target) clearInterval(interval);
+  }, 40);
+}
+
+// ===== BERITA =====
+function renderBerita(berita) {
+  const container = document.getElementById('berita-container');
+  if (!berita || berita.length === 0) {
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-newspaper"></i><p>Belum ada berita saat ini.</p></div>`;
+    return;
+  }
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  container.innerHTML = berita.map((b, i) => {
+    const d = new Date(b.tanggal);
+    const dateStr = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    return `
+    <div class="berita-card reveal reveal-delay-${i % 3}" onclick="openBeritaModal(${b.id})">
+      <div class="berita-card-header">
+        ${b.gambar ? `<img src="${b.gambar}" alt="${b.judul}" />` : `<i class="fas fa-newspaper berita-card-header-icon"></i>`}
+        <span class="berita-kategori">${b.kategori || 'Berita'}</span>
+      </div>
+      <div class="berita-card-body">
+        <div class="berita-tanggal"><i class="far fa-calendar-alt"></i>${dateStr}</div>
+        <div class="berita-judul">${b.judul}</div>
+        <div class="berita-isi">${b.isi}</div>
+        <a class="berita-read">Baca selengkapnya <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openBeritaModal(id) {
+  const b = appData && appData.berita && appData.berita.find(x => x.id == id);
+  if (!b) return;
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const d = new Date(b.tanggal);
+  document.getElementById('modal-title').textContent = b.judul;
+  document.getElementById('modal-meta').innerHTML = `
+    <span><i class="far fa-calendar-alt"></i>${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}</span>
+    <span><i class="fas fa-tag"></i>${b.kategori || 'Berita'}</span>`;
+  
+  // --- MULAI DARI SINI KODE YANG DIUBAH AGAR GAMBAR MUNCUL DI POP-UP ---
+  let isiModalHtml = '';
+  
+  // Jika di data berita ada gambarnya, kita buat tag <img> untuk nampilin foto
+  if (b.gambar) {
+    isiModalHtml += `<img src="${b.gambar}" alt="${b.judul}" style="width:100%; max-height:350px; object-fit:cover; border-radius:8px; margin-bottom:15px;" />`;
+  }
+  
+  // Masukkan teks isi beritanya seperti biasa
+  isiModalHtml += b.isi.replace(/\n/g, '<br>');
+  
+  document.getElementById('modal-body').innerHTML = isiModalHtml;
+  // --- SELESAI ---
+
+  document.getElementById('beritaModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('beritaModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('beritaModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+// ===== KEGIATAN =====
+function renderKegiatan(kegiatan) {
+  const container = document.getElementById('kegiatan-container');
+  if (!kegiatan || kegiatan.length === 0) {
+    container.innerHTML = `<div class="empty-state"><i class="fas fa-calendar-xmark"></i><p>Belum ada kegiatan yang dijadwalkan.</p></div>`;
+    return;
+  }
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  container.innerHTML = kegiatan.map((k, i) => {
+    const d = new Date(k.tanggal);
+    const statusLabel = { upcoming: 'Akan Datang', ongoing: 'Berlangsung', done: 'Selesai' }[k.status] || 'Akan Datang';
+    const statusClass = { upcoming: 'badge-upcoming', ongoing: 'badge-ongoing', done: 'badge-done' }[k.status] || 'badge-upcoming';
+    return `
+    <div class="kegiatan-card reveal reveal-delay-${i % 3}">
+      ${k.gambar ? `<img src="${k.gambar}" alt="${k.nama}" style="width:80px;height:80px;object-fit:cover;border-radius:10px;flex-shrink:0;border:1px solid var(--border)" />` : `
+      <div class="kegiatan-date">
+        <div class="kegiatan-date-day">${d.getDate()}</div>
+        <div class="kegiatan-date-month">${months[d.getMonth()]}</div>
+      </div>`}
+      <div class="kegiatan-info">
+        <div class="kegiatan-nama">${k.nama}</div>
+        <div class="kegiatan-meta">
+          <span><i class="fas fa-calendar-alt"></i>${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}</span>
+          <span><i class="fas fa-clock"></i>${k.waktu || '—'}</span>
+          <span><i class="fas fa-location-dot"></i>${k.tempat || '—'}</span>
+        </div>
+        <div class="kegiatan-desc">${k.deskripsi || ''}</div>
+      </div>
+      <span class="kegiatan-badge ${statusClass}">${statusLabel}</span>
+    </div>`;
+  }).join('');
+}
+
+// ===== PELANGGARAN =====
+async function cekPelanggaran() {
+    // Ambil nama dari input pencarian
+    const namaInput = document.getElementById('input-nama').value; 
+    
+    const loadingEl = document.getElementById('pelanggaran-loading');
+    const resultEl = document.getElementById('pelanggaran-result');
+    const resultNama = document.getElementById('result-nama');
+    const resultKelas = document.getElementById('result-kelas');
+    const poinBadge = document.getElementById('poin-badge');
+    const tableWrap = document.getElementById('result-table-wrap');
+
+    // Reset tampilan & Tampilkan loading
+    loadingEl.style.display = 'block';
+    resultEl.style.style = 'none'; // Sembunyikan hasil dulu jika ada pencarian sebelumnya
+    tableWrap.innerHTML = ''; 
+
+    try {
+        // Panggil API backend dengan membawa nama yang dicari
+        const response = await fetch(`/api/cek-pelanggaran?nama=${encodeURIComponent(namaInput)}`);
+        
+        if (!response.ok) {
+            throw new Error('Siswa tidak ditemukan atau terjadi error');
+        }
+
+        const data = await response.json(); // Data berupa array pelanggaran siswa
+
+        // Ambil info dasar dari baris pertama hasil (Nama & Kelas)
+        const infoSiswa = data[0];
+        resultNama.innerText = infoSiswa['Nama Siswa'] || infoSiswa['Nama'] || '—';
+        resultKelas.innerText = infoSiswa['Kelas'] || '—';
+
+        // Hitung total poin jika siswa tersebut punya beberapa riwayat pelanggaran
+        let totalPoin = 0;
+        
+        // Buat tabel detail pelanggaran secara dinamis
+        // Mengatur background tabel agar selalu putih dan teksnya selalu hitam/gelap
+      let tabelHtml = `
+    <table border="1" style="width:100%; border-collapse: collapse; margin-top:15px; background-color: #ffffff; color: #2d3142;">
+        <thead>
+            <tr style="background-color: #4F5D75; color: #ffffff;">
+                <th style="padding:10px;">Tanggal</th>
+                <th style="padding:10px;">Jenis Pelanggaran</th>
+                <th style="padding:10px;">Poin</th>
+            </tr>
+        </thead>
+        <tbody>
+        `;
+
+        data.forEach(item => {
+            const poin = parseInt(item['Poin'] || 0);
+            totalPoin += poin;
+
+            tabelHtml += `
+    <tr style="border-bottom: 1px solid #dddddd;">
+        <td style="padding:10px; text-align:center;">${item['Tanggal'] || '-'}</td>
+        <td style="padding:10px;">${item['Jenis Pelanggaran'] || '-'}</td>
+        <td style="padding:10px; text-align:center; font-weight:bold;">${poin}</td>
+    </tr>
+            `;
+        });
+
+        tabelHtml += `</tbody></table>`;
+
+        // Update total poin di badge dan masukkan tabel ke bungkusnya
+        poinBadge.innerText = `${totalPoin} Poin`;
+        tableWrap.innerHTML = tabelHtml;
+
+        // Tampilkan kotak hasil
+        resultEl.style.display = 'block';
+
+    } catch (error) {
+        alert(error.message);
+        resultNama.innerText = '—';
+        resultKelas.innerText = '—';
+        poinBadge.innerText = '0 Poin';
+    } finally {
+        // Sembunyikan loading setelah proses selesai
+        loadingEl.style.display = 'none';
+    }
+}
+
+// ===== PENGURUS =====
+function renderPengurus(pengurus) {
+  const container = document.getElementById('pengurus-container');
+  if (!pengurus || pengurus.length === 0) {
+    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="fas fa-users"></i><p>Data pengurus belum tersedia.</p></div>`;
+    return;
+  }
+  container.innerHTML = pengurus.map((p, i) => `
+    <div class="pengurus-card reveal reveal-delay-${i % 4}">
+      <div class="pengurus-avatar">
+        ${p.foto ? `<img src="${p.foto}" alt="${p.nama}" />` : `<i class="fas fa-user"></i>`}
+      </div>
+      <div class="pengurus-nama">${p.nama}</div>
+      <div class="pengurus-jabatan">${p.jabatan}</div>
+      <div class="pengurus-kelas">${p.kelas}</div>
+      ${p.instagram ? `<a href="https://instagram.com/${p.instagram.replace('@','')}" target="_blank" class="pengurus-ig"><i class="fab fa-instagram"></i>${p.instagram}</a>` : ''}
+    </div>`).join('');
+}
+
+// ===== DEMO MODE (no server) =====
+function renderDemo() {
+  appData = {
+    berita: [{
+      id: 1, judul: "Selamat Datang di Website MPK MAN 1 Bekasi",
+      isi: "Website resmi MPK MAN 1 Bekasi telah hadir. Hubungkan ke server untuk menampilkan data sebenarnya.",
+      tanggal: new Date().toISOString().split('T')[0],
+      kategori: "pengumuman", gambar: ""
+    }],
+    kegiatan: [],
+    pengurus: [],
+    pengaturan: { namaSekolah: "MAN 1 Bekasi", tahunAjaran: "2024/2025", visi: "", misi: "" }
+  };
+  applySettings(appData.pengaturan);
+  renderBerita(appData.berita);
+  renderKegiatan(appData.kegiatan);
+  renderPengurus(appData.pengurus);
+  updateStats(appData);
+}
+
+// ===== SCROLL REVEAL =====
+function initReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+// ===== MOBILE MENU =====
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// ===== NAV ACTIVE LINKS =====
+window.addEventListener('scroll', () => {
+  const sections = ['beranda','berita','kegiatan','pelanggaran','pengurus'];
+  const links = document.querySelectorAll('.nav-links a');
+  let current = 'beranda';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 100) current = id;
+  });
+  links.forEach(l => {
+    l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+  });
+});
+
+// Footer year
+document.getElementById('footer-year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
