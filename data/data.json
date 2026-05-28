@@ -1,0 +1,73 @@
+{
+  "berita": [
+    {
+      "id": 1779963218433,
+      "judul": "LIBUR 2026",
+      "kategori": "pengumuman",
+      "tanggal": "2026-05-29",
+      "isi": "man 1 bekasi besok libur cuy",
+      "gambar": "/uploads/1779963218422-foto_berita-Screenshot__8_.png"
+    },
+    {
+      "judul": "QURBAN 2026",
+      "kategori": "lainnya",
+      "tanggal": "2026-05-29",
+      "isi": "besok akan dilaksanakan kegiatan qurban di man 1 bekasi, jadi pastikan temen temen tidak terlambat untuk datang ke sekolah yaaa!!",
+      "id": 1779958247832
+    },
+    {
+      "judul": "LIBUR 2026",
+      "kategori": "pengumuman",
+      "tanggal": "2026-05-28",
+      "isi": "besok sekolah libur ya teman temann letsgooo",
+      "id": 1779958057487
+    },
+    {
+      "id": 1,
+      "judul": "Selamat Datang di Website MPK MAN 1 Bekasi",
+      "isi": "Website resmi Majelis Perwakilan Kelas MAN 1 Bekasi telah resmi diluncurkan. Kami hadir untuk menjadi jembatan antara siswa dan sekolah.",
+      "tanggal": "2026-05-28",
+      "kategori": "pengumuman",
+      "gambar": ""
+    }
+  ],
+  "kegiatan": [
+    {
+      "id": 1,
+      "nama": "Pelantikan MPK 2025/2026",
+      "tanggal": "2025-08-15",
+      "waktu": "08:00",
+      "tempat": "Aula MAN 1 Bekasi",
+      "deskripsi": "Pelantikan resmi pengurus MPK periode 2025/2026 yang akan dihadiri oleh seluruh sivitas akademika MAN 1 Bekasi.",
+      "status": "upcoming"
+    },
+    {
+      "id": 2,
+      "nama": "Masa Ta'aruf Madrasah Aliyah ",
+      "tanggal": "2025-07-21",
+      "waktu": "07:00",
+      "tempat": "Lapangan MAN 1 Bekasi",
+      "deskripsi": "Kegiatan pengenalan lingkungan sekolah bagi siswa baru tahun ajaran 2025/2026.",
+      "status": "upcoming"
+    }
+  ],
+  "pengurus": [
+    {
+      "nama": "Gyna Nurrahmi Sisw0",
+      "kelas": "XI.10",
+      "jabatan": "Ketua MPK",
+      "instagram": "@gynaaaaa",
+      "foto": "",
+      "id": 1779961967690
+    }
+  ],
+  "pengaturan": {
+    "namaSekolah": "MAN 1 Bekasi",
+    "namaMPK": "Majelis Perwakilan Kelas",
+    "tahunAjaran": "2024/2025",
+    "visi": "Mewujudkan MPK yang aktif, aspiratif, dan berintegritas dalam membangun ekosistem sekolah yang harmonis.",
+    "misi": "Menampung dan menyalurkan aspirasi siswa, mengawal pelaksanaan tata tertib, dan menjadi mitra strategis OSIS.",
+    "logoPath": "",
+    "adminPassword": "mpkman1bekasi2024"
+  }
+}
