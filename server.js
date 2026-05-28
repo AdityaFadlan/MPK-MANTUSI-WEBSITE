@@ -3,7 +3,7 @@
 // ============================================
 
 const express = require('express');
-const app = express(); // Pembuatan app ditaruh paling atas
+const app = express();
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
@@ -13,19 +13,23 @@ const XLSX = require('xlsx');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Nge-serve file statis dari folder public dengan path.join (Aman buat Vercel)
+// Nge-serve file statis dari folder public secara aman
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ============ FOLDER SETUP ============
-// Pastikan semua folder yang dibutuhkan sudah ada
-['data', 'public', 'public/uploads'].forEach(dir => {
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-});
+// ============ FOLDER & DATA SETUP (Aman buat Vercel Serverless) ============
+// Vercel hanya mengizinkan penulisan file di folder /tmp bawaan serverless
+const DATA_FILE = path.join('/tmp', 'data.json');
+const EXCEL_FILE = path.join('/tmp', 'pelanggaran.xlsx');
+
+// Pastikan folder penyimpanan lokal temporary di Vercel sudah siap
+if (!fs.existsSync('/tmp/uploads')) {
+  fs.mkdirSync('/tmp/uploads', { recursive: true });
+}
 
 // ============ MULTER — KONFIGURASI UPLOAD GAMBAR ============
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'public/uploads/');
+    cb(null, '/tmp/uploads/');
   },
   filename: function (req, file, cb) {
     const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, '_');
@@ -47,16 +51,12 @@ const upload = multer({
 
 // Upload khusus Excel (untuk data pelanggaran)
 const uploadExcelStorage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'data/'),
+  destination: (req, file, cb) => cb(null, '/tmp/'),
   filename: (req, file, cb) => cb(null, file.fieldname + path.extname(file.originalname))
 });
 const uploadExcel = multer({ storage: uploadExcelStorage });
 
-// ============ DATA FILE PATHS ============
-const DATA_FILE = path.join(__dirname, 'data', 'data.json');
-const EXCEL_FILE = path.join(__dirname, 'data', 'pelanggaran.xlsx');
-
-// ============ INISIALISASI DATA ============
+// ============ INISIALISASI DATA AWAL ============
 function initData() {
   if (!fs.existsSync(DATA_FILE)) {
     const defaultData = {
@@ -146,7 +146,7 @@ function saveData(data) {
 
 function deleteOldFile(filePath) {
   if (!filePath) return;
-  const fullPath = path.join(__dirname, 'public', filePath);
+  const fullPath = path.join('/tmp', filePath);
   if (fs.existsSync(fullPath)) {
     try { fs.unlinkSync(fullPath); } catch(e) { /* abaikan error */ }
   }
@@ -404,25 +404,17 @@ app.put('/api/admin/pengaturan', authMiddleware, (req, res) => {
 // ============ ADMIN: UPLOAD EXCEL ============
 app.post('/api/admin/upload-excel', authMiddleware, uploadExcel.single('excel'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'File tidak ditemukan' });
-  const dest = EXCEL_FILE;
-  fs.renameSync(req.file.path, dest);
-  res.json({ success: true, message: 'File Excel berhasil diupload' });
+  res.json({ success: true, message: 'File Excel berhasil diupload ke server temporary' });
 });
 
 // ============ ADMIN: UPLOAD LOGO ============
 app.post('/api/admin/upload-logo', authMiddleware, upload.single('logo'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'File tidak ditemukan' });
   const ext = path.extname(req.file.originalname);
-  const dest = path.join(__dirname, 'public', 'logo' + ext);
-  ['.png','.jpg','.jpeg','.svg','.webp'].forEach(e => {
-    const old = path.join(__dirname, 'public', 'logo' + e);
-    if (old !== dest && fs.existsSync(old)) try { fs.unlinkSync(old); } catch(e){}
-  });
-  fs.renameSync(req.file.path, dest);
   const data = readData();
-  data.pengaturan.logoPath = '/logo' + ext;
+  data.pengaturan.logoPath = '/uploads/' + req.file.filename;
   saveData(data);
-  res.json({ success: true, logoPath: '/logo' + ext });
+  res.json({ success: true, logoPath: data.pengaturan.logoPath });
 });
 
 // ============ DOWNLOAD TEMPLATE EXCEL ============
@@ -433,11 +425,9 @@ app.get('/api/admin/template-excel', authMiddleware, (req, res) => {
     ['Contoh Nama', 'X IPA 1', '2024-01-15', 'Terlambat masuk kelas', 5, 'Keterangan opsional']
   ]);
   XLSX.utils.book_append_sheet(wb, ws, 'Pelanggaran');
-  const tmpFile = path.join(__dirname, 'data', 'template_tmp.xlsx');
+  const tmpFile = path.join('/tmp', 'template_pelanggaran.xlsx');
   XLSX.writeFile(wb, tmpFile);
-  res.download(tmpFile, 'template_pelanggaran.xlsx', () => {
-    if (fs.existsSync(tmpFile)) fs.unlinkSync(tmpFile);
-  });
+  res.download(tmpFile, 'template_pelanggaran.xlsx');
 });
 
 // ============ ROUTING HTML ============
